@@ -32,7 +32,7 @@ newtype Vertex (n :: Nat) a = Vertex a deriving (Eq, Ord, Show)
 instance Functor (Vertex n) where
     fmap f (Vertex a) = Vertex (f a)
 
-type Bipartition m x n y = Map (Vertex m x) (Vertex n y)
+type Bipartition m x n y = Map (Vertex m x) [Vertex n y]
 
 data Bipartite x y = Bipartite (Bipartition 1 x 2 y) (Bipartition 2 y 1 x) deriving (Show)
 
@@ -57,7 +57,8 @@ emptyBipartite = Bipartite (emptyPartition :: Bipartition 1 x 2 y) (emptyPartiti
 -- Don't export
 -- Might want to swap parameters
 insertPart :: (Ord x) => Bipartition m x n y -> Edge m x n y -> Bipartition m x n y
-insertPart part (vertM, vertN) = Map.insert vertM vertN part
+insertPart part (vertM, vertN) = Map.insertWith ifExists vertM [vertN] part
+    where ifExists new old = new ++ old
 
 -- Edge first and then bipartite for insert arguments might make more sense. Insert "edge" into "graph"
 class InsertEdge edge bp | edge -> bp where
