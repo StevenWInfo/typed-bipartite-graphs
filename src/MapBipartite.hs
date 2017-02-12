@@ -58,18 +58,17 @@ emptyBipartite = Bipartite (emptyPartition :: Bipartition 1 x 2 y) (emptyPartiti
 
 -- Don't export
 -- Might want to swap parameters
-insertPart :: (Ord x) => Bipartition m x n y -> Edge m x n y -> Bipartition m x n y
-insertPart part (vertM, vertN) = Map.insertWith ifExists vertM [vertN] part
+insertPart :: (Ord x) => Edge m x n y -> Bipartition m x n y -> Bipartition m x n y
+insertPart (vertM, vertN) part = Map.insertWith ifExists vertM [vertN] part
     where ifExists new old = new ++ old
 
--- Edge first and then bipartite for insert arguments might make more sense. Insert "edge" into "graph"
 class InsertEdge edge bp | edge -> bp where
-    insert :: bp -> edge -> bp
+    insert :: edge -> bp -> bp
 
 instance (Ord x) => InsertEdge (Edge 1 x 2 y) (Bipartite x y) where
-    insert (Bipartite partOne partTwo) edge = Bipartite (insertPart partOne edge) partTwo
+    insert edge (Bipartite partOne partTwo) = Bipartite (insertPart edge partOne) partTwo
 
 instance (Ord y) => InsertEdge (Edge 2 y 1 x) (Bipartite x y) where
-    insert (Bipartite partOne partTwo) edge = Bipartite partOne (insertPart partTwo edge)
+    insert edge (Bipartite partOne partTwo) = Bipartite partOne (insertPart edge partTwo)
 
 -- I suppose you could make a function that wasn't polymorphic and which might be slightly more efficient if you knew which partition a vertex goes into.

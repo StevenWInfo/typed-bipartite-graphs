@@ -14,7 +14,7 @@ tests = testGroup "MapBipartite Tests"
     [ testCase "Trying out tests" $
         genVertex markOne "foobar" @?= (Vertex "foobar" :: Vertex 1 String)
     , testCase "Basic inserts" $
-        show ((flip MB.insert) (fooOne, barTwo) $ foldr (flip MB.insert) emptyBipartite [(barTwo, fooOne), (barTwo, bazOne)]) @?= "Bipartite (fromList [(Vertex \"foo\",[Vertex \"bar\"])]) (fromList [(Vertex \"bar\",[Vertex \"foo\",Vertex \"baz\"])])"
+        show (MB.insert (fooOne, barTwo) $ foldr MB.insert emptyBipartite [(barTwo, fooOne), (barTwo, bazOne)]) @?= "Bipartite (fromList [(Vertex \"foo\",[Vertex \"bar\"])]) (fromList [(Vertex \"bar\",[Vertex \"foo\",Vertex \"baz\"])])"
     ]
     where fooOne = genVertex markOne "foo"
           barTwo = genVertex markTwo "bar"
