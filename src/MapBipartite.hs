@@ -23,6 +23,8 @@ import Data.Map.Strict as Map
 import Data.Proxy
 
 {-
+ - Ajacency list representation of a bipartite graph using maps.
+ -
  - This has the advantage of also not having to maintain the array range invariants. This simplifies things and also removes any kind of check to manipulate a bipartite graph.
  -}
 
@@ -69,3 +71,5 @@ instance (Ord x) => InsertEdge (Edge 1 x 2 y) (Bipartite x y) where
 
 instance (Ord y) => InsertEdge (Edge 2 y 1 x) (Bipartite x y) where
     insert (Bipartite partOne partTwo) edge = Bipartite partOne (insertPart partTwo edge)
+
+-- I suppose you could make a function that wasn't polymorphic and which might be slightly more efficient if you knew which partition a vertex goes into.
