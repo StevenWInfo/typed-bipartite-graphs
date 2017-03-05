@@ -15,7 +15,7 @@ cabal-version:       >=1.10
 
 library
   hs-source-dirs:      src
-  exposed-modules:     Bipartite
+  exposed-modules:     ArrayBipartite
                      , MapBipartite
   build-depends:       base >= 4.7 && < 5
                      , array
@@ -27,6 +27,7 @@ test-suite typed-bipartite-graphs-test
   hs-source-dirs:      test
   main-is:             TestSuite.hs
   other-modules:       MapBipartiteTests
+                     , ArrayBipartiteTests
   build-depends:       base
                      , tasty
                      , tasty-hunit

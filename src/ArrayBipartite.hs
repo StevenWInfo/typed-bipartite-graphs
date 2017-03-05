@@ -6,7 +6,7 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE FunctionalDependencies #-}
 
-module Bipartite
+module ArrayBipartite
     ( Vertex (..)
     , Bipartite (..)
     , Bipartition
@@ -48,7 +48,7 @@ instance Functor (Vertex n) where
 
 -- Edge first and then bipartite for insert arguments might make more sense. Insert "edge" into "graph"
 class InsertEdge edge bp | edge -> bp where
-    insert :: bp -> edge -> bp
+    insert :: edge -> bp -> bp
 
 type Edge m x n y = (Vertex m x, Vertex n y)
 
@@ -56,16 +56,16 @@ type Edge m x n y = (Vertex m x, Vertex n y)
 insertPart :: (Ix x, Ix y) => Bipartition m x n y -> Edge m x n y -> Bipartition m x n y
 insertPart part (vertM, vertN) = part // [(vertM, vertN : (part ! vertM))]
 
+-- Don't export
 emptyPartition :: (Ix x, Ix y) => (Vertex m x, Vertex m x) -> Bipartition m x n y
 emptyPartition pRange = listArray pRange emptyLists
     where emptyLists = (replicate (rangeSize pRange) []) :: [[Vertex n y]]
 
--- Don't export
 emptyBipartite :: (Ix x, Ix y) => (Vertex "a" x, Vertex "a" x) -> (Vertex "b" y, Vertex "b" y) -> Bipartite x y
 emptyBipartite aRange bRange = Bipartite (emptyPartition aRange) (emptyPartition bRange)
 
 instance (Ix x, Ix y) => InsertEdge (Edge "a" x "b" y) (Bipartite x y) where
-   insert (Bipartite partA partB) edge = Bipartite (insertPart partA edge) partB
+   insert edge (Bipartite partA partB) = Bipartite (insertPart partA edge) partB
 
 instance (Ix x, Ix y) => InsertEdge (Edge "b" y "a" x) (Bipartite x y) where
-   insert (Bipartite partA partB) edge = Bipartite partA (insertPart partB edge)
+   insert edge (Bipartite partA partB) = Bipartite partA (insertPart partB edge)

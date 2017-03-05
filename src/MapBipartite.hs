@@ -23,9 +23,11 @@ import Data.Map.Strict as Map
 import Data.Proxy
 
 {-
- - Ajacency list representation of a bipartite graph using maps.
- -
- - This has the advantage of also not having to maintain the array range invariants. This simplifies things and also removes any kind of check to manipulate a bipartite graph.
+Ajacency list representation of a bipartite graph using maps.
+
+This has the advantage of also not having to maintain the array range invariants. This simplifies things and also removes any kind of check to manipulate a bipartite graph.
+
+I suppose you could make a function that wasn't polymorphic and which might be slightly more efficient if you knew which partition a vertex goes into. Not sure exactly how polymorphism affects performance though.
  -}
 
 newtype Vertex (n :: Nat) a = Vertex a deriving (Eq, Ord, Show)
@@ -49,15 +51,12 @@ markOne = Proxy
 markTwo :: Proxy 2
 markTwo = Proxy
 
--- Don't export
 emptyPartition :: Bipartition m x n y
 emptyPartition = Map.empty
 
 emptyBipartite :: Bipartite x y
 emptyBipartite = Bipartite (emptyPartition :: Bipartition 1 x 2 y) (emptyPartition :: Bipartition 2 y 1 x)
 
--- Don't export
--- Might want to swap parameters
 insertPart :: (Ord x) => Edge m x n y -> Bipartition m x n y -> Bipartition m x n y
 insertPart (vertM, vertN) part = Map.insertWith ifExists vertM [vertN] part
     where ifExists new old = new ++ old
@@ -70,5 +69,3 @@ instance (Ord x) => InsertEdge (Edge 1 x 2 y) (Bipartite x y) where
 
 instance (Ord y) => InsertEdge (Edge 2 y 1 x) (Bipartite x y) where
     insert edge (Bipartite partOne partTwo) = Bipartite partOne (insertPart edge partTwo)
-
--- I suppose you could make a function that wasn't polymorphic and which might be slightly more efficient if you knew which partition a vertex goes into.
