@@ -52,8 +52,18 @@ data Edge m x n y = ToRight (Vertex m x) (Vertex n y) | ToLeft (Vertex m x) (Ver
 
 type BPEdge x y = Edge 1 x 2 y
 
--- The Ord constraint actually doesn't make sense outside of things like Map implementation. Might have to create wrapper types for Map or something to get rid of this. Same for Ix.
+{-
 -- empty would be nice, but possibly doesn't exactly work with types like arrays.
 class Bipartite bp where
     -- empty :: bp a b
-    insert :: (Ord a, Ord b, Ix a, Ix b) => BPEdge a b -> bp a b -> bp a b
+    insert :: BPEdge a b -> bp a b -> bp a b
+    -}
+
+class Bipartite bp a b | a b -> bp where
+    insert :: BPEdge a b -> bp a b -> bp a b
+
+{- This is the old version which also worked with constrained type instances. I might want to reconsider it because it might have some advantages.
+class Bipartite edge bp | edge -> bp where
+    --empty  :: bp
+    insert :: edge -> bp -> bp
+-}

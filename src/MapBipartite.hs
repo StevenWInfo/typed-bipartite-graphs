@@ -8,7 +8,6 @@
 
 module MapBipartite
     ( MapBipartite (..)
-    , Bipartition
     , genVertex
     , markOne
     , markTwo
@@ -46,7 +45,6 @@ insertPart :: (Ord x) => (Vertex m x, Vertex n y) -> Bipartition m x n y -> Bipa
 insertPart (vertM, vertN) part = Map.insertWith ifExists vertM [vertN] part
     where ifExists new old = new ++ old
 
-instance Bipartite MapBipartite where
-    -- empty = emptyBipartite
+instance (Ord a, Ord b) => Bipartite MapBipartite a b where
     insert (ToRight v1 v2) (MapBipartite partOne partTwo) = MapBipartite (insertPart (v1, v2) partOne) partTwo
     insert (ToLeft v1 v2) (MapBipartite partOne partTwo) = MapBipartite partOne (insertPart (v2, v1) partTwo)

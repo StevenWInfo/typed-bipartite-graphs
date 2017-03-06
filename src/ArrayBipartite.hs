@@ -8,9 +8,6 @@
 
 module ArrayBipartite
     ( ArrayBipartite (..)
-    , Bipartition
-    -- , insertPart -- Don't export
-    -- , emptyPartition -- Don't export
     , emptyBipartite
     ) where
 
@@ -37,6 +34,6 @@ emptyPartition pRange = listArray pRange emptyLists
 emptyBipartite :: (Ix x, Ix y) => (Vertex 1 x, Vertex 1 x) -> (Vertex 2 y, Vertex 2 y) -> ArrayBipartite x y
 emptyBipartite aRange bRange = ArrayBipartite (emptyPartition aRange) (emptyPartition bRange)
 
-instance Bipartite ArrayBipartite where
+instance (Ix a, Ix b) => Bipartite ArrayBipartite a b where
     insert (ToRight v1 v2) (ArrayBipartite partOne partTwo) = ArrayBipartite (insertPart (v1, v2) partOne) partTwo
     insert (ToLeft v1 v2) (ArrayBipartite partOne partTwo) = ArrayBipartite partOne (insertPart (v2, v1) partTwo)
