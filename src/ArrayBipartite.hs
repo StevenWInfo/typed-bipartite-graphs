@@ -26,8 +26,8 @@ data ArrayBipartite x y = ArrayBipartite (Bipartition 1 x 2 y) (Bipartition 2 y 
 type Bipartition m x n y = Array (Vertex m x) [Vertex n y]
 
 -- Don't export
-insertPart :: (Ix x, Ix y) => Bipartition m x n y -> Edge m x n y -> Bipartition m x n y
-insertPart part (vertM, vertN) = part // [(vertM, vertN : (part ! vertM))]
+insertPart :: (Ix x, Ix y) => (Vertex m x, Vertex n y) -> Bipartition m x n y -> Bipartition m x n y
+insertPart (vertM, vertN) part = part // [(vertM, vertN : (part ! vertM))]
 
 -- Don't export
 emptyPartition :: (Ix x, Ix y) => (Vertex m x, Vertex m x) -> Bipartition m x n y
@@ -37,8 +37,6 @@ emptyPartition pRange = listArray pRange emptyLists
 emptyBipartite :: (Ix x, Ix y) => (Vertex 1 x, Vertex 1 x) -> (Vertex 2 y, Vertex 2 y) -> ArrayBipartite x y
 emptyBipartite aRange bRange = ArrayBipartite (emptyPartition aRange) (emptyPartition bRange)
 
-instance (Ix x, Ix y) => Bipartite (Edge 1 x 2 y) (ArrayBipartite x y) where
-   insert edge (ArrayBipartite partA partB) = ArrayBipartite (insertPart partA edge) partB
-
-instance (Ix x, Ix y) => Bipartite (Edge 2 y 1 x) (ArrayBipartite x y) where
-   insert edge (ArrayBipartite partA partB) = ArrayBipartite partA (insertPart partB edge)
+instance Bipartite ArrayBipartite where
+    insert (ToRight v1 v2) (ArrayBipartite partOne partTwo) = ArrayBipartite (insertPart (v1, v2) partOne) partTwo
+    insert (ToLeft v1 v2) (ArrayBipartite partOne partTwo) = ArrayBipartite partOne (insertPart (v2, v1) partTwo)

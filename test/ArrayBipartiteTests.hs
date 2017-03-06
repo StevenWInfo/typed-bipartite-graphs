@@ -15,7 +15,7 @@ tests = testGroup "ArrayBipartite Tests"
     [ testCase "Smoke Test" $
         genVertex markOne "foobar" @?= (Vertex "foobar" :: Vertex 1 String)
     , testCase "Basic inserts" $
-        show (insert (fooOne, barTwo) $ foldr insert empty [(barTwo, fooOne), (barTwo, bazOne)]) @?= "ArrayBipartite (array (Vertex 1,Vertex 10) [(Vertex 1,[]),(Vertex 2,[Vertex 3]),(Vertex 3,[]),(Vertex 4,[]),(Vertex 5,[]),(Vertex 6,[]),(Vertex 7,[]),(Vertex 8,[]),(Vertex 9,[]),(Vertex 10,[])]) (array (Vertex 1,Vertex 10) [(Vertex 1,[]),(Vertex 2,[]),(Vertex 3,[Vertex 2,Vertex 5]),(Vertex 4,[]),(Vertex 5,[]),(Vertex 6,[]),(Vertex 7,[]),(Vertex 8,[]),(Vertex 9,[]),(Vertex 10,[])])"
+        show (insert (ToRight fooOne barTwo) $ foldr insert empty [ToLeft fooOne barTwo, ToLeft bazOne barTwo]) @?= "ArrayBipartite (array (Vertex 1,Vertex 10) [(Vertex 1,[]),(Vertex 2,[Vertex 3]),(Vertex 3,[]),(Vertex 4,[]),(Vertex 5,[]),(Vertex 6,[]),(Vertex 7,[]),(Vertex 8,[]),(Vertex 9,[]),(Vertex 10,[])]) (array (Vertex 1,Vertex 10) [(Vertex 1,[]),(Vertex 2,[]),(Vertex 3,[Vertex 2,Vertex 5]),(Vertex 4,[]),(Vertex 5,[]),(Vertex 6,[]),(Vertex 7,[]),(Vertex 8,[]),(Vertex 9,[]),(Vertex 10,[])])"
     ]
     where fooOne  = genVertex markOne 2
           barTwo  = genVertex markTwo 3
